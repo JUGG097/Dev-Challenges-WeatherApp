@@ -5,19 +5,23 @@ import {
 } from "./Styles/WindStatus.styled";
 import { FaLocationArrow } from "react-icons/fa";
 
-const WindStatus: React.FC = () => {
+const WindStatus: React.FC<{ windSpeed: number; windDirection: string }> = ({
+	windSpeed,
+	windDirection,
+}) => {
 	return (
 		<StyledWindStatus>
 			<p>Wind Status</p>
 			<p className="wind-value">
-				7<span>mph</span>
+				{Math.round(windSpeed)}
+				<span>mph</span>
 			</p>
 
 			<p className="">
 				<StyleDirectionIcon>
 					<FaLocationArrow />
 				</StyleDirectionIcon>{" "}
-				<span>WSW</span>
+				<span>{windDirection}</span>
 			</p>
 		</StyledWindStatus>
 	);

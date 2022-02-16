@@ -5,6 +5,13 @@ export const Flex = styled.div`
 	/* align-items: center; */
 	flex: 1;
 
+	.loading-div {
+		min-height: 50vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	.first-div {
 		padding: 20px 10px;
 		min-height: 100vh;

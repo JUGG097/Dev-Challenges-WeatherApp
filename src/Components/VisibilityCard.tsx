@@ -1,12 +1,15 @@
 import React from "react";
 import { StyledVisibilityCard } from "./Styles/VisibilityCard.styled";
 
-const VisibilityCard: React.FC = () => {
+const VisibilityCard: React.FC<{ visibilityValue: number }> = ({
+	visibilityValue,
+}) => {
 	return (
 		<StyledVisibilityCard>
 			<p>Visibility</p>
 			<p className="visibility-value">
-				6,4<span> miles</span>
+				{Math.round(visibilityValue)}
+				<span> miles</span>
 			</p>
 		</StyledVisibilityCard>
 	);

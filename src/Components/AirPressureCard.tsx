@@ -1,12 +1,15 @@
 import React from "react";
 import { StyledAirPressure } from "./Styles/AirPressureCard.styled";
 
-const AirPressureCard: React.FC = () => {
+const AirPressureCard: React.FC<{ pressureValue: number }> = ({
+	pressureValue,
+}) => {
 	return (
 		<StyledAirPressure>
 			<p>Air Pressure</p>
 			<p className="pressure-value">
-				998<span> mb</span>
+				{pressureValue}
+				<span> mb</span>
 			</p>
 		</StyledAirPressure>
 	);

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledHumidityCard = styled.div`
+export const StyledHumidityCard = styled.div<{ value: string }>`
 	background-color: #1e213a;
 	padding: 10px 20px;
 
@@ -33,7 +33,7 @@ export const StyledHumidityCard = styled.div`
 
 	.progress-filler {
 		height: 100%;
-		width: 84%;
+		width: ${(props) => props.value};
 		background-color: #ffec65;
 		border-radius: inherit;
 		text-align: right;

@@ -1,13 +1,16 @@
 import React from "react";
 import { StyledHumidityCard } from "./Styles/HumidityCard.styled";
 
-const HumidityCard: React.FC = () => {
+const HumidityCard: React.FC<{ humidityValue: number }> = ({
+	humidityValue,
+}) => {
 	return (
 		// Pass Humidity value as a prop to styled component
-		<StyledHumidityCard>
+		<StyledHumidityCard value={`${humidityValue}%`}>
 			<p>Humidty</p>
 			<p className="humidity-value">
-				84<span>%</span>
+				{humidityValue}
+				<span>%</span>
 			</p>
 
 			<div>
