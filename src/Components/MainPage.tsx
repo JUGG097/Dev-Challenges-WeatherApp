@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Flex } from "./Styles/Flex";
+import { FaSearch } from "react-icons/fa";
 import { BiCurrentLocation } from "react-icons/bi";
 import { ImLocation2 } from "react-icons/im";
 import { AiOutlineCloseCircle } from "react-icons/ai";
@@ -16,13 +17,15 @@ import {
 	LocationAPIData,
 } from "../Utils/Types";
 
-import { WeatherImageMap } from "../Utils/Helper";
+import { WeatherImageMap, formatDate } from "../Utils/Helper";
 
 const MainPage: React.FC = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
 	const [search, setSearch] = useState(false);
-	const [location, setLocation] = useState("Helsinki");
+	const [searchTerm, setSearchTerm] = useState("");
+	const [tempUnit, setTempUnit] = useState("celsius");
+	const [location, setLocation] = useState("lisbon");
 	const [todayData, setTodayData] = useState<TodayWeatherData>({
 		id: 0,
 		weather_state_name: "",
@@ -45,8 +48,53 @@ const MainPage: React.FC = () => {
 	const searchModalLaunch = () => {
 		setSearch(true);
 	};
+
 	const searchModalClose = () => {
 		setSearch(false);
+	};
+
+	const tempUnitChange = () => {
+		if (tempUnit === "celsius") {
+			setTempUnit("fahrenheit");
+		} else {
+			setTempUnit("celsius");
+		}
+	};
+
+	const handleSearchTermUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchTerm(e.currentTarget.value);
+	};
+
+	const handleLocationSearch = () => {
+		if (searchTerm === "") {
+			setError("Enter a Location");
+		} else {
+			setLocation(searchTerm);
+		}
+	};
+
+	const locationValueChange = (newLocation: string) => {
+		setSearch(false);
+		setLocation(newLocation);
+	};
+
+	const renderTempValue = (tempValue: number) => {
+		if (tempUnit === "celsius") {
+			return (
+				<>
+					{Math.round(tempValue)}
+					<span>&#176;C</span>
+				</>
+			);
+		} else if (tempUnit === "fahrenheit") {
+			let fahrenheitValue = tempValue * 1.8 + 32;
+			return (
+				<>
+					{Math.round(fahrenheitValue)}
+					<span>&#176;F</span>
+				</>
+			);
+		}
 	};
 
 	const weatherDataRequest = (earthId: number) => {
@@ -61,14 +109,19 @@ const MainPage: React.FC = () => {
 				setTodayData(data[0]);
 				setOtherDaysData(data.slice(1));
 				setLoading(false);
+				setSearch(false);
+				setError("");
 			})
 			.catch(function (error) {
 				console.log(error);
+				setError("No Data Found");
 			});
 	};
 
 	useEffect(() => {
 		const weatherRequest = () => {
+			setLoading(true);
+			setError("");
 			axios
 				.get(
 					"https://afternoon-ridge-35420.herokuapp.com/https://www.metaweather.com/api/location/search",
@@ -86,10 +139,12 @@ const MainPage: React.FC = () => {
 						weatherDataRequest(data.woeid);
 					} else {
 						console.log("I am not running");
+						setError("Location Not Found");
 					}
 				})
 				.catch(function (error) {
 					console.log("I am not running");
+					setError("Location Not Found");
 				});
 		};
 		weatherRequest();
@@ -117,9 +172,17 @@ const MainPage: React.FC = () => {
 							</div>
 
 							{loading ? (
-								<div className="text-center loading-div">
-									Loading Weather Information
-								</div>
+								error ? (
+									<div className="col-12 mb-2">
+										<div className="error loading-div">
+											<p>{error}</p>
+										</div>
+									</div>
+								) : (
+									<div className="text-center loading-div">
+										Loading Weather Information
+									</div>
+								)
 							) : (
 								<>
 									<div className="row weather-image">
@@ -141,15 +204,12 @@ const MainPage: React.FC = () => {
 										<div className="col-12">
 											<div>
 												<p className="temp-value mb-5">
-													{/* 15<span>&#176;C</span> */}
-													{Math.round(
+													{renderTempValue(
 														todayData.the_temp
 													)}
-													<span>&#176;C</span>
 												</p>
 											</div>
 											<div>
-												{/* <p>Shower</p> */}
 												<p>
 													{
 														todayData.weather_state_name
@@ -161,8 +221,13 @@ const MainPage: React.FC = () => {
 									<div className="row other-value">
 										<div className="col-12">
 											<div>
-												<p>Today . Fri, 5 Jun</p>
 												<p>
+													Today .{" "}
+													{formatDate(
+														todayData.applicable_date
+													)}
+												</p>
+												<p className="location-name">
 													<span>
 														<ImLocation2 />
 													</span>{" "}
@@ -177,11 +242,92 @@ const MainPage: React.FC = () => {
 					</div>
 				) : (
 					<div className="search-div">
-						<p onClick={searchModalClose} className="close-btn">
-							<AiOutlineCloseCircle />
-						</p>
+						<div className="container">
+							<p onClick={searchModalClose} className="close-btn">
+								<AiOutlineCloseCircle />
+							</p>
+							<div className="row mb-5">
+								<div className="col-8 text-center">
+									<div className="input-text">
+										<span>
+											<FaSearch />
+										</span>
+										<input
+											type="search"
+											placeholder="search location"
+											value={searchTerm}
+											onChange={handleSearchTermUpdate}
+										></input>
+									</div>
+								</div>
 
-						<h1>Hi I am working</h1>
+								<div className="col-4">
+									<div className="search-btn">
+										<button
+											className="btn btn-primary"
+											type="submit"
+											onClick={handleLocationSearch}
+										>
+											Search
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<div className="row mb-5">
+								{loading && !error && (
+									<div className="col-12 mb-2">
+										<div className="text-center">
+											<p>Loading Weather Information</p>
+										</div>
+									</div>
+								)}
+								{error !== "No Data Found" && error !== "" && (
+									<div className="col-12 mb-2">
+										<div className="error">
+											<p>{error}</p>
+										</div>
+									</div>
+								)}
+							</div>
+
+							<div className="row">
+								<h4 className="mb-2">Popular Cities</h4>
+								<div className="col-12 mb-2">
+									<div
+										className="popular-cities"
+										onClick={() =>
+											locationValueChange("London")
+										}
+									>
+										<p>London</p>
+										<span>&gt;</span>
+									</div>
+								</div>
+								<div className="col-12 mb-2">
+									<div
+										className="popular-cities"
+										onClick={() =>
+											locationValueChange("Barcelona")
+										}
+									>
+										<p>Barcelona</p>
+										<span>&gt;</span>
+									</div>
+								</div>
+								<div className="col-12 mb-2">
+									<div
+										className="popular-cities"
+										onClick={() =>
+											locationValueChange("Long Beach")
+										}
+									>
+										<p>Long Beach</p>
+										<span>&gt;</span>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				)}
 
@@ -190,16 +336,39 @@ const MainPage: React.FC = () => {
 						<div className="row temp-choice">
 							<div className="col-12">
 								<div className="">
-									<span className="">&#176;C</span>
-									<span className="active">&#176;F</span>
+									<span
+										className={`${
+											tempUnit === "celsius" && "active"
+										}`}
+										onClick={tempUnitChange}
+									>
+										&#176;C
+									</span>
+									<span
+										className={`${
+											tempUnit === "fahrenheit" &&
+											"active"
+										}`}
+										onClick={tempUnitChange}
+									>
+										&#176;F
+									</span>
 								</div>
 							</div>
 						</div>
 
 						{loading ? (
-							<div className="text-center loading-div">
-								Loading Weather Information
-							</div>
+							error ? (
+								<div className="col-12 mb-2">
+									<div className="error loading-div">
+										<p>{error}</p>
+									</div>
+								</div>
+							) : (
+								<div className="text-center loading-div">
+									Loading Weather Information
+								</div>
+							)
 						) : (
 							<>
 								<div className="row text-center mt-4">
@@ -212,13 +381,17 @@ const MainPage: React.FC = () => {
 										{otherDaysData.map((data, index) =>
 											index === 0 ? (
 												<DayWeatherCard
+													key={index}
 													data={data}
 													tomorrow={true}
+													tempValue={renderTempValue}
 												/>
 											) : (
 												<DayWeatherCard
+													key={index}
 													data={data}
 													tomorrow={false}
+													tempValue={renderTempValue}
 												/>
 											)
 										)}

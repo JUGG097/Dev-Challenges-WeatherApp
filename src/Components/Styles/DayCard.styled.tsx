@@ -27,10 +27,6 @@ export const StyledDayCard = styled.div`
 		justify-content: space-around;
 	}
 
-	div span {
-		color: #a09fb1;
-	}
-
 	div span:first-child {
 		color: #e7e7eb;
 	}
@@ -41,5 +37,13 @@ export const StyledDayCard = styled.div`
 		margin-top: -20px;
 		margin-bottom: 30px;
 		padding-right: 20px;
+	}
+
+	div .min-temp-value {
+		color: #a09fb1;
+	}
+
+	div .min-temp-value span {
+		color: #a09fb1;
 	}
 `;

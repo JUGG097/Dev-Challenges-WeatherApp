@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { WindDirectionMap } from "../../Utils/Helper";
 
 export const StyledWindStatus = styled.div`
 	background-color: #1e213a;
@@ -25,7 +26,7 @@ export const StyledWindStatus = styled.div`
 	}
 `;
 
-export const StyleDirectionIcon = styled.span`
+export const StyleDirectionIcon = styled.span<{ direction: string }>`
 	background-color: rgba(255, 255, 255, 0.3);
 	padding: 5px;
 	border-radius: 50%;
@@ -41,6 +42,6 @@ export const StyleDirectionIcon = styled.span`
 	cursor: pointer; */
 
 	svg {
-		/* transform: rotate(-120deg); */
+		transform: ${(props) => WindDirectionMap[props.direction]};
 	}
 `;

@@ -18,7 +18,7 @@ const WindStatus: React.FC<{ windSpeed: number; windDirection: string }> = ({
 			</p>
 
 			<p className="">
-				<StyleDirectionIcon>
+				<StyleDirectionIcon direction={windDirection}>
 					<FaLocationArrow />
 				</StyleDirectionIcon>{" "}
 				<span>{windDirection}</span>

@@ -11,6 +11,25 @@ export const WeatherImageMap: { [key: string]: string } = {
 	c: "Clear.png",
 };
 
+export const WindDirectionMap: { [key: string]: string } = {
+	N: "rotate(-45deg)",
+	NNE: "rotate(0deg)",
+	NE: "rotate(0deg)",
+	ENE: "rotate(0deg)",
+	E: "rotate(45deg)",
+	ESE: "rotate(90deg)",
+	SE: "rotate(90deg)",
+	SSE: "rotate(90deg)",
+	S: "rotate(135deg)",
+	SSW: "rotate(-180deg)",
+	SW: "rotate(-180deg)",
+	WSW: "rotate(-180deg)",
+	W: "rotate(-135deg)",
+	WNW: "rotate(-90deg)",
+	NW: "rotate(-90deg)",
+	NNW: "rotate(-90deg)",
+};
+
 const months = [
 	"Jan",
 	"Feb",
