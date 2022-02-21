@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Flex } from "./Styles/Flex";
-import { FaSearch } from "react-icons/fa";
-import { BiCurrentLocation } from "react-icons/bi";
-import { ImLocation2 } from "react-icons/im";
-import { AiOutlineCloseCircle } from "react-icons/ai";
 import { StyledDayCardFlex } from "./Styles/DayCard.styled";
 import DayWeatherCard from "./DayWeatherCard";
 import WindStatus from "./WindStatus";
 import HumidityCard from "./HumidityCard";
 import VisibilityCard from "./VisibilityCard";
 import AirPressureCard from "./AirPressureCard";
+import WeatherDataOverview from "./WeatherDataOverview";
 import {
 	TodayWeatherData,
 	OtherDayWeatherData,
 	LocationAPIData,
 } from "../Utils/Types";
-
-import { WeatherImageMap, formatDate } from "../Utils/Helper";
+import SearchPage from "./SearchPage";
 
 const MainPage: React.FC = () => {
 	const [loading, setLoading] = useState(true);
@@ -25,7 +21,7 @@ const MainPage: React.FC = () => {
 	const [search, setSearch] = useState(false);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [tempUnit, setTempUnit] = useState("celsius");
-	const [location, setLocation] = useState("lisbon");
+	const [location, setLocation] = useState("helsinki");
 	const [todayData, setTodayData] = useState<TodayWeatherData>({
 		id: 0,
 		weather_state_name: "",
@@ -154,181 +150,24 @@ const MainPage: React.FC = () => {
 		<>
 			<Flex>
 				{!search ? (
-					<div className="first-div">
-						<div className="container text-center">
-							<div className="row">
-								<div className="col-8 my-auto">
-									<div>
-										<button onClick={searchModalLaunch}>
-											Search for Places
-										</button>
-									</div>
-								</div>
-								<div className="col-4 my-auto">
-									<div className="search-icon">
-										<BiCurrentLocation />
-									</div>
-								</div>
-							</div>
-
-							{loading ? (
-								error ? (
-									<div className="col-12 mb-2">
-										<div className="error loading-div">
-											<p>{error}</p>
-										</div>
-									</div>
-								) : (
-									<div className="text-center loading-div">
-										Loading Weather Information
-									</div>
-								)
-							) : (
-								<>
-									<div className="row weather-image">
-										<div className="col-12">
-											<div>
-												<img
-													src={`./images/${
-														WeatherImageMap[
-															todayData
-																.weather_state_abbr
-														]
-													}`}
-													alt=""
-												/>
-											</div>
-										</div>
-									</div>
-									<div className="row weather-value">
-										<div className="col-12">
-											<div>
-												<p className="temp-value mb-5">
-													{renderTempValue(
-														todayData.the_temp
-													)}
-												</p>
-											</div>
-											<div>
-												<p>
-													{
-														todayData.weather_state_name
-													}
-												</p>
-											</div>
-										</div>
-									</div>
-									<div className="row other-value">
-										<div className="col-12">
-											<div>
-												<p>
-													Today .{" "}
-													{formatDate(
-														todayData.applicable_date
-													)}
-												</p>
-												<p className="location-name">
-													<span>
-														<ImLocation2 />
-													</span>{" "}
-													{location}
-												</p>
-											</div>
-										</div>
-									</div>
-								</>
-							)}
-						</div>
-					</div>
+					<WeatherDataOverview
+						location={location}
+						todayData={todayData}
+						loading={loading}
+						searchModalLaunch={searchModalLaunch}
+						error={error}
+						renderTempValue={renderTempValue}
+					/>
 				) : (
-					<div className="search-div">
-						<div className="container">
-							<p onClick={searchModalClose} className="close-btn">
-								<AiOutlineCloseCircle />
-							</p>
-							<div className="row mb-5">
-								<div className="col-8 text-center">
-									<div className="input-text">
-										<span>
-											<FaSearch />
-										</span>
-										<input
-											type="search"
-											placeholder="search location"
-											value={searchTerm}
-											onChange={handleSearchTermUpdate}
-										></input>
-									</div>
-								</div>
-
-								<div className="col-4">
-									<div className="search-btn">
-										<button
-											className="btn btn-primary"
-											type="submit"
-											onClick={handleLocationSearch}
-										>
-											Search
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<div className="row mb-5">
-								{loading && !error && (
-									<div className="col-12 mb-2">
-										<div className="text-center">
-											<p>Loading Weather Information</p>
-										</div>
-									</div>
-								)}
-								{error !== "No Data Found" && error !== "" && (
-									<div className="col-12 mb-2">
-										<div className="error">
-											<p>{error}</p>
-										</div>
-									</div>
-								)}
-							</div>
-
-							<div className="row">
-								<h4 className="mb-2">Popular Cities</h4>
-								<div className="col-12 mb-2">
-									<div
-										className="popular-cities"
-										onClick={() =>
-											locationValueChange("London")
-										}
-									>
-										<p>London</p>
-										<span>&gt;</span>
-									</div>
-								</div>
-								<div className="col-12 mb-2">
-									<div
-										className="popular-cities"
-										onClick={() =>
-											locationValueChange("Barcelona")
-										}
-									>
-										<p>Barcelona</p>
-										<span>&gt;</span>
-									</div>
-								</div>
-								<div className="col-12 mb-2">
-									<div
-										className="popular-cities"
-										onClick={() =>
-											locationValueChange("Long Beach")
-										}
-									>
-										<p>Long Beach</p>
-										<span>&gt;</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+					<SearchPage
+						searchModalClose={searchModalClose}
+						searchTerm={searchTerm}
+						handleSearchTermUpdate={handleSearchTermUpdate}
+						handleLocationSearch={handleLocationSearch}
+						loading={loading}
+						error={error}
+						locationValueChange={locationValueChange}
+					/>
 				)}
 
 				<div className="second-div">
@@ -373,11 +212,6 @@ const MainPage: React.FC = () => {
 							<>
 								<div className="row text-center mt-4">
 									<StyledDayCardFlex>
-										{/* <DayWeatherCard />
-										<DayWeatherCard />
-										<DayWeatherCard />
-										<DayWeatherCard />
-										<DayWeatherCard /> */}
 										{otherDaysData.map((data, index) =>
 											index === 0 ? (
 												<DayWeatherCard
@@ -396,7 +230,6 @@ const MainPage: React.FC = () => {
 											)
 										)}
 									</StyledDayCardFlex>
-									{/* Will use map function on DailyCard component*/}
 								</div>
 
 								<div className="row today-highlights mt-4">
