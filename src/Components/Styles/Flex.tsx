@@ -12,7 +12,7 @@ export const Flex = styled.div`
 		justify-content: center;
 	}
 
-	@media (max-width: 768px) {
+	@media (max-width: 912px) {
 		flex-direction: column;
 	}
 `;
