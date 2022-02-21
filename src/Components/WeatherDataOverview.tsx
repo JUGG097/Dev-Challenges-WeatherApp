@@ -1,6 +1,10 @@
 import React from "react";
 import { BiCurrentLocation } from "react-icons/bi";
-import { WeatherImageMap, formatDate } from "../Utils/Helper";
+import {
+	WeatherImageMap,
+	formatDate,
+	getLocationButton,
+} from "../Utils/Helper";
 import { ImLocation2 } from "react-icons/im";
 import { TodayWeatherData } from "../Utils/Types";
 import { StyledWeatherOverview } from "./Styles/WeatherDataOverview.styled";
@@ -12,6 +16,8 @@ const WeatherDataOverview: React.FC<{
 	searchModalLaunch: () => void;
 	error: string;
 	renderTempValue: (tempValue: number) => JSX.Element | undefined;
+	successCallback: (position: any) => void;
+	errorCallback: () => void;
 }> = ({
 	location,
 	todayData,
@@ -19,6 +25,8 @@ const WeatherDataOverview: React.FC<{
 	searchModalLaunch,
 	error,
 	renderTempValue,
+	successCallback,
+	errorCallback,
 }) => {
 	return (
 		<StyledWeatherOverview>
@@ -32,7 +40,15 @@ const WeatherDataOverview: React.FC<{
 						</div>
 					</div>
 					<div className="col-4 my-auto">
-						<div className="search-icon">
+						<div
+							className="search-icon"
+							onClick={() => {
+								getLocationButton(
+									successCallback,
+									errorCallback
+								);
+							}}
+						>
 							<BiCurrentLocation />
 						</div>
 					</div>

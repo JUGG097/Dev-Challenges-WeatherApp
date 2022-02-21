@@ -55,3 +55,17 @@ export const formatDate = (dateString: string): string => {
 
 	return `${days[day]}, ${date} ${months[month]}`;
 };
+
+export const getLocationButton = (
+	successCallback: (position: any) => void,
+	errorCallback?: () => void
+) => {
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			successCallback,
+			errorCallback
+		);
+	} else {
+		alert("Location Access Not Supported");
+	}
+};

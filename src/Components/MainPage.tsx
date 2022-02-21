@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Flex } from "./Styles/Flex";
-import { StyledDayCardFlex } from "./Styles/DayCard.styled";
-import DayWeatherCard from "./DayWeatherCard";
-import WindStatus from "./WindStatus";
-import HumidityCard from "./HumidityCard";
-import VisibilityCard from "./VisibilityCard";
-import AirPressureCard from "./AirPressureCard";
 import WeatherDataOverview from "./WeatherDataOverview";
 import {
 	TodayWeatherData,
 	OtherDayWeatherData,
 	LocationAPIData,
 } from "../Utils/Types";
+import { getLocationButton } from "../Utils/Helper";
 import SearchPage from "./SearchPage";
+import WeatherDataDetails from "./WeatherDataDetails";
 
 const MainPage: React.FC = () => {
 	const [loading, setLoading] = useState(true);
@@ -93,10 +89,10 @@ const MainPage: React.FC = () => {
 		}
 	};
 
-	const weatherDataRequest = (earthId: number) => {
+	const weatherDataRequest = (woeid: number) => {
 		axios
 			.get(
-				`https://afternoon-ridge-35420.herokuapp.com/https://www.metaweather.com/api/location/${earthId}/`
+				`https://afternoon-ridge-35420.herokuapp.com/https://www.metaweather.com/api/location/${woeid}/`
 			)
 			.then((response) => {
 				let data: OtherDayWeatherData =
@@ -114,10 +110,48 @@ const MainPage: React.FC = () => {
 			});
 	};
 
+	const showPosition = (position: any) => {
+		console.log(position.coords);
+
+		axios
+			.get(
+				"https://afternoon-ridge-35420.herokuapp.com/https://www.metaweather.com/api/location/search",
+				{
+					params: {
+						lattlong: `${position.coords.latitude},${position.coords.longitude}`,
+					},
+				}
+			)
+			.then((response) => {
+				console.log(response);
+				if (!(response.data[0] === undefined)) {
+					let data: LocationAPIData = response.data[0];
+					console.log(response.data[0]);
+					setLocation(data.title);
+				} else {
+					console.log("I am not running");
+					setError("Location Not Found");
+				}
+			})
+			.catch(function (error) {
+				console.log("I am not running");
+				setError("Location Not Found");
+			});
+	};
+
+	const errorAlert = () => {
+		alert("Location Access Not Supported or Denied!!!");
+	};
+
+	useEffect(() => {
+		getLocationButton(showPosition);
+	}, []);
+
 	useEffect(() => {
 		const weatherRequest = () => {
 			setLoading(true);
 			setError("");
+
 			axios
 				.get(
 					"https://afternoon-ridge-35420.herokuapp.com/https://www.metaweather.com/api/location/search",
@@ -157,6 +191,8 @@ const MainPage: React.FC = () => {
 						searchModalLaunch={searchModalLaunch}
 						error={error}
 						renderTempValue={renderTempValue}
+						successCallback={showPosition}
+						errorCallback={errorAlert}
 					/>
 				) : (
 					<SearchPage
@@ -169,109 +205,15 @@ const MainPage: React.FC = () => {
 						locationValueChange={locationValueChange}
 					/>
 				)}
-
-				<div className="second-div">
-					<div className="container">
-						<div className="row temp-choice">
-							<div className="col-12">
-								<div className="">
-									<span
-										className={`${
-											tempUnit === "celsius" && "active"
-										}`}
-										onClick={tempUnitChange}
-									>
-										&#176;C
-									</span>
-									<span
-										className={`${
-											tempUnit === "fahrenheit" &&
-											"active"
-										}`}
-										onClick={tempUnitChange}
-									>
-										&#176;F
-									</span>
-								</div>
-							</div>
-						</div>
-
-						{loading ? (
-							error ? (
-								<div className="col-12 mb-2">
-									<div className="error loading-div">
-										<p>{error}</p>
-									</div>
-								</div>
-							) : (
-								<div className="text-center loading-div">
-									Loading Weather Information
-								</div>
-							)
-						) : (
-							<>
-								<div className="row text-center mt-4">
-									<StyledDayCardFlex>
-										{otherDaysData.map((data, index) =>
-											index === 0 ? (
-												<DayWeatherCard
-													key={index}
-													data={data}
-													tomorrow={true}
-													tempValue={renderTempValue}
-												/>
-											) : (
-												<DayWeatherCard
-													key={index}
-													data={data}
-													tomorrow={false}
-													tempValue={renderTempValue}
-												/>
-											)
-										)}
-									</StyledDayCardFlex>
-								</div>
-
-								<div className="row today-highlights mt-4">
-									<h4 className="mb-3">Today's Highlights</h4>
-									<div className="col-sm-6 text-center mt-3">
-										<WindStatus
-											windSpeed={todayData.wind_speed}
-											windDirection={
-												todayData.wind_direction_compass
-											}
-										/>
-									</div>
-									<div className="col-sm-6 text-center mt-3">
-										<HumidityCard
-											humidityValue={todayData.humidity}
-										/>
-									</div>
-									<div className="col-sm-6 text-center mt-3">
-										<VisibilityCard
-											visibilityValue={
-												todayData.visibility
-											}
-										/>
-									</div>
-									<div className="col-sm-6 text-center mt-3">
-										<AirPressureCard
-											pressureValue={
-												todayData.air_pressure
-											}
-										/>
-									</div>
-								</div>
-							</>
-						)}
-
-						<footer className="text-center mt-4">
-							<p>
-								created by Adeoluwa Adeboye - devChallenges.io
-							</p>
-						</footer>
-					</div>
-				</div>
+				<WeatherDataDetails
+					tempUnit={tempUnit}
+					tempUnitChange={tempUnitChange}
+					loading={loading}
+					error={error}
+					otherDaysData={otherDaysData}
+					todayData={todayData}
+					renderTempValue={renderTempValue}
+				/>
 			</Flex>
 		</>
 	);

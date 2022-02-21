@@ -12,6 +12,13 @@ export const StyledWeatherOverview = styled.div`
 
 	.search-icon {
 		font-size: 32px;
+		cursor: pointer;
+	}
+
+	.search-icon svg {
+		border-radius: 50%;
+		background-color: #6e707a;
+		padding: 5px;
 	}
 
 	button {
