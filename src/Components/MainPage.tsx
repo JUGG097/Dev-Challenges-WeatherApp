@@ -123,7 +123,7 @@ const MainPage: React.FC = () => {
 				}
 			)
 			.then((response) => {
-				console.log(response);
+				// console.log(response);
 				if (!(response.data[0] === undefined)) {
 					let data: LocationAPIData = response.data[0];
 					// console.log(response.data[0]);
@@ -162,7 +162,7 @@ const MainPage: React.FC = () => {
 					}
 				)
 				.then((response) => {
-					console.log(response);
+					// console.log(response);
 					if (!(response.data[0] === undefined)) {
 						let data: LocationAPIData = response.data[0];
 						// console.log(response.data[0]);
