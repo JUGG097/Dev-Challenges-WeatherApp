@@ -97,7 +97,7 @@ const MainPage: React.FC = () => {
 			.then((response) => {
 				let data: OtherDayWeatherData =
 					response.data.consolidated_weather;
-				console.log(response.data.consolidated_weather);
+				// console.log(response.data.consolidated_weather);
 				setTodayData(data[0]);
 				setOtherDaysData(data.slice(1));
 				setLoading(false);
@@ -105,13 +105,13 @@ const MainPage: React.FC = () => {
 				setError("");
 			})
 			.catch(function (error) {
-				console.log(error);
+				// console.log(error);
 				setError("No Data Found");
 			});
 	};
 
 	const showPosition = (position: any) => {
-		console.log(position.coords);
+		// console.log(position.coords);
 
 		axios
 			.get(
@@ -126,15 +126,15 @@ const MainPage: React.FC = () => {
 				console.log(response);
 				if (!(response.data[0] === undefined)) {
 					let data: LocationAPIData = response.data[0];
-					console.log(response.data[0]);
+					// console.log(response.data[0]);
 					setLocation(data.title);
 				} else {
-					console.log("I am not running");
+					// console.log("I am not running");
 					setError("Location Not Found");
 				}
 			})
 			.catch(function (error) {
-				console.log("I am not running");
+				// console.log("I am not running");
 				setError("Location Not Found");
 			});
 	};
@@ -165,15 +165,15 @@ const MainPage: React.FC = () => {
 					console.log(response);
 					if (!(response.data[0] === undefined)) {
 						let data: LocationAPIData = response.data[0];
-						console.log(response.data[0]);
+						// console.log(response.data[0]);
 						weatherDataRequest(data.woeid);
 					} else {
-						console.log("I am not running");
+						// console.log("I am not running");
 						setError("Location Not Found");
 					}
 				})
 				.catch(function (error) {
-					console.log("I am not running");
+					// console.log("I am not running");
 					setError("Location Not Found");
 				});
 		};
